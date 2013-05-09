@@ -1,7 +1,6 @@
 //------------------------------------------------------------------------------
-// Estimations basées sur les simulations exactes.
+// Estimations utilisant la simulation par discrétisation en temps
 //------------------------------------------------------------------------------
-
 
 //------------------------------------------------------------------------------
 // Evolution de l'espérance de l'encombrement avec le temps
@@ -10,14 +9,22 @@
 // lambda (reel) : Parametre de la loi d'arrivee des paquets
 // mu (reel) : Parametre de la loi de la duree d'envoie des paquets
 // t (vecteur ligne) : Temps pour lesquels estimer l'espérance de l'encombrement.
+// h : (reel) Pas de la discrétisation en temps.
 // nbsimulations : (entier) Le nombre de simulations utilisées pour calculer
 // l'espérance.
 //
 // E (vecteur ligne) : Les espérances correspondant aux temps t.
 //
-function E=esperanceEncombrement(lambda, mu, t, nbSimulations)
-    X= trajectoireExacte1(lambda, mu, t, nbSimulations)
-    E = sum(X, 'r')/nbSimulations
+function E=esperanceDiscr(lambda, mu, t, h, nbSimulations)
+    tmax = t($)
+    [T,X] = trajectoireDiscrete(lambda, mu, tmax, h, nbSimulations)
+    Y = []
+    for i=1:nbSimulations
+        [ind, occ, inf] = dsearch(t, T)
+        Y = [Y; X(i, ind)]
+    end
+
+    E = sum(Y, 'r')/nbSimulations
 endfunction
 
 //------------------------------------------------------------------------------
@@ -26,30 +33,30 @@ endfunction
 //
 // lambda (reel) : Parametre de la loi d'arrivee des paquets
 // mu (reel) : Parametre de la loi de la duree d'envoie des paquets
+// h : (reel) Pas de la discrétisation en temps.
 // nbSimulation (entier) : Nombre de simulations a effectuer.
 // N (entier) : Taille de la mémoire tampon.
 //
 // Tn (vecteur ligne) : Les temps de saturation données par les simulations
 //
-function Tn=tempsDeSaturation(lambda, mu, nbSimulations, N)
-    n = 2000
+function Tn=tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N)
+    n = 1000
     X = zeros(nbSimulations, 1)
     Tn = zeros(nbSimulations, 1)
     F = ones(nbSimulations, 1)
+    Ones = ones(nbSimulations, 1)
     while or(F)
         i = 1
-        T1 = grand(nbSimulations, n, 'exp', 1/lambda)
-        T2 = grand(nbSimulations, n, 'exp', 1/(lambda+mu))
-        U = grand(nbSimulations, n, 'def')
-        e = 1*(U<=lambda/(lambda+mu)) + (-1)*(U>lambda/(lambda+mu))
+        IncrA = 1*(grand(nbSimulations, n, 'def')<=(lambda*h))
+        IncrD = (-1)*(grand(nbSimulations, n, 'def')<=(mu*h))
         while or(F) & (i<=n)
-            Tn = Tn + F.*(T1(:,i).*(X==0) + T2(:,i).*(X>0))
-            X = X + F.*(ones(nbSimulations, 1).*(X==0) + e(:,i).*(X>0))         
+            X = X + F.*(IncrA(:,i).*(X==0) + (IncrD(:,i) + IncrA(:,i)).*(X>0))         
+            Tn = Tn + F.*Ones
             F = X<N
             i = i+1
         end
     end
-    Tn = Tn'
+    Tn = (Tn*h)'
 endfunction
 
 //------------------------------------------------------------------------------
@@ -58,6 +65,7 @@ endfunction
 //
 // lambda (reel) : Parametre de la loi d'arrivee des paquets
 // mu (reel) : Parametre de la loi de la duree d'envoie des paquets
+// h : (reel) Pas de la discrétisation en temps.
 // nbSimulation (entier) : Nombre de simulations a effectuer.
 // N (entier) : Taille de la mémoire tampon.
 // S (reel) : Le temps S dans la définition de la probabilité (cf énoncé)
@@ -65,28 +73,22 @@ endfunction
 // pS (reel) : Estimation de la probabilité de saturation de la mémoire tampon
 //             avant le temps S.
 //
-function pS=probabiliteSaturation(lambda, mu, nbSimulations, N, S)
-    Tn = tempsDeSaturation(lambda, mu, nbSimulations, N)
+function pS=probabiliteSatDiscr(lambda, mu, h, nbSimulations, N, S)
+    Tn = tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N)
     pS = sum(Tn<S)/nbSimulations
 endfunction
 
-stacksize(150000000)
-//n = 500
+
+
+
+
+
+//n = 1000
 //t = linspace(0, n, n+1)
-//E = esperanceEncombrement(0.45, 0.5, t, 1000)
+//E = esperanceDiscr(0.5, 0.5, t, 1, 500)
 //plot(t,E)
-
-
-//Tn = tempsDeSaturation(0.55, 0.5, 1000, 50)
+//
+//Tn = tempsDeSaturationDiscr(0.55, 0.5, 0.1, 1000, 50)
 //disp(sum(Tn)/1000)
 
-
-disp(probabiliteSaturation(0.6, 0.5, 1000, 50, 400))
-
-
-
-
-
-
-
-
+disp(probabiliteSatDiscr(0.6, 0.5, 0.1, 1000, 50, 400))
