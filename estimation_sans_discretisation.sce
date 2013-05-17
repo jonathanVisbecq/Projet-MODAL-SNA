@@ -1,22 +1,27 @@
 //------------------------------------------------------------------------------
-// Estimations basées sur les simulations exactes.
+// Estimations basÃ©es sur les simulations exactes.
 //------------------------------------------------------------------------------
 
 
 //------------------------------------------------------------------------------
-// Evolution de l'espérance de l'encombrement avec le temps
+// Evolution de l'espÃ©rance de l'encombrement avec le temps
 //------------------------------------------------------------------------------
 //
 // lambda (reel) : Parametre de la loi d'arrivee des paquets
 // mu (reel) : Parametre de la loi de la duree d'envoie des paquets
-// t (vecteur ligne) : Temps pour lesquels estimer l'espérance de l'encombrement.
-// nbsimulations : (entier) Le nombre de simulations utilisées pour calculer
-// l'espérance.
+// t (vecteur ligne) : Temps pour lesquels estimer l'espÃ©rance de l'encombrement.
+// nbsimulations : (entier) Le nombre de simulations utilisÃ©es pour calculer
+// l'espÃ©rance.
+// alpha (reel) : La valeur du risque pour l'intervalle de confiance.
 //
-// E (vecteur ligne) : Les espérances correspondant aux temps t.
+// E (vecteur ligne) : Les espÃ©rances correspondant aux temps t.
+// ValConf (vecteur ligne) : L'ecart entre la moyenne empiriaue et les bornes
+//                          de l'intervalle de confiance
 //
-function E=esperanceEncombrement(lambda, mu, t, nbSimulations)
-    X= trajectoireExacte1(lambda, mu, t, nbSimulations)
+function [E, ValConf]=esperanceEncombrement(lambda, mu, t, nbSimulations, alpha)
+    X = trajectoireExacte1(lambda, mu, t, nbSimulations)
+    x = cdfnor('X', 0., 1., 1-alpha/2, alpha/2)
+    ValConf = x*sqrt(variance(X, 'r'))/sqrt(nbSimulations)
     E = sum(X, 'r')/nbSimulations
 endfunction
 
@@ -27,9 +32,9 @@ endfunction
 // lambda (reel) : Parametre de la loi d'arrivee des paquets
 // mu (reel) : Parametre de la loi de la duree d'envoie des paquets
 // nbSimulation (entier) : Nombre de simulations a effectuer.
-// N (entier) : Taille de la mémoire tampon.
+// N (entier) : Taille de la mÃ©moire tampon.
 //
-// Tn (vecteur ligne) : Les temps de saturation données par les simulations
+// Tn (vecteur ligne) : Les temps de saturation donnÃ©es par les simulations
 //
 function Tn=tempsDeSaturation(lambda, mu, nbSimulations, N)
     n = 2000
@@ -53,16 +58,16 @@ function Tn=tempsDeSaturation(lambda, mu, nbSimulations, N)
 endfunction
 
 //------------------------------------------------------------------------------
-// Estimation de la probabilité de saturation avant un temps donné.
+// Estimation de la probabilitÃ© de saturation avant un temps donnÃ©.
 //------------------------------------------------------------------------------
 //
 // lambda (reel) : Parametre de la loi d'arrivee des paquets
 // mu (reel) : Parametre de la loi de la duree d'envoie des paquets
 // nbSimulation (entier) : Nombre de simulations a effectuer.
-// N (entier) : Taille de la mémoire tampon.
-// S (reel) : Le temps S dans la définition de la probabilité (cf énoncé)
+// N (entier) : Taille de la mÃ©moire tampon.
+// S (reel) : Le temps S dans la dÃ©finition de la probabilitÃ© (cf Ã©noncÃ©)
 //
-// pS (reel) : Estimation de la probabilité de saturation de la mémoire tampon
+// pS (reel) : Estimation de la probabilitÃ© de saturation de la mÃ©moire tampon
 //             avant le temps S.
 //
 function pS=probabiliteSaturation(lambda, mu, nbSimulations, N, S)

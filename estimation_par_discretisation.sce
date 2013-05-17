@@ -1,21 +1,24 @@
 //------------------------------------------------------------------------------
-// Estimations utilisant la simulation par discrétisation en temps
+// Estimations utilisant la simulation par discrÃ©tisation en temps
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-// Evolution de l'espérance de l'encombrement avec le temps
+// Evolution de l'espÃ©rance de l'encombrement avec le temps
 //------------------------------------------------------------------------------
 //
 // lambda (reel) : Parametre de la loi d'arrivee des paquets
 // mu (reel) : Parametre de la loi de la duree d'envoie des paquets
-// t (vecteur ligne) : Temps pour lesquels estimer l'espérance de l'encombrement.
-// h : (reel) Pas de la discrétisation en temps.
-// nbsimulations : (entier) Le nombre de simulations utilisées pour calculer
-// l'espérance.
+// t (vecteur ligne) : Temps pour lesquels estimer l'espÃ©rance de l'encombrement.
+// h : (reel) Pas de la discrÃ©tisation en temps.
+// nbsimulations : (entier) Le nombre de simulations utilisÃ©es pour calculer
+// l'espÃ©rance.
+// alpha (reel) : La valeur du risque pour l'intervalle de confiance.
 //
-// E (vecteur ligne) : Les espérances correspondant aux temps t.
+// E (vecteur ligne) : Les espÃ©rances correspondant aux temps t.
+// ValConf (vecteur ligne) : L'ecart entre la moyenne empiriaue et les bornes
+//                          de l'intervalle de confiance
 //
-function E=esperanceDiscr(lambda, mu, t, h, nbSimulations)
+function [E, ValConf]=esperanceDiscr(lambda, mu, t, h, nbSimulations, alpha)
     tmax = t($)
     [T,X] = trajectoireDiscrete(lambda, mu, tmax, h, nbSimulations)
     Y = []
@@ -23,7 +26,8 @@ function E=esperanceDiscr(lambda, mu, t, h, nbSimulations)
         [ind, occ, inf] = dsearch(t, T)
         Y = [Y; X(i, ind)]
     end
-
+    x = cdfnor('X', 0., 1., 1-alpha/2, alpha/2)
+    ValConf = x*sqrt(variance(Y, 'r'))/sqrt(nbSimulations)
     E = sum(Y, 'r')/nbSimulations
 endfunction
 
@@ -33,11 +37,11 @@ endfunction
 //
 // lambda (reel) : Parametre de la loi d'arrivee des paquets
 // mu (reel) : Parametre de la loi de la duree d'envoie des paquets
-// h : (reel) Pas de la discrétisation en temps.
+// h : (reel) Pas de la discrÃ©tisation en temps.
 // nbSimulation (entier) : Nombre de simulations a effectuer.
-// N (entier) : Taille de la mémoire tampon.
+// N (entier) : Taille de la mÃ©moire tampon.
 //
-// Tn (vecteur ligne) : Les temps de saturation données par les simulations
+// Tn (vecteur ligne) : Les temps de saturation donnÃ©es par les simulations
 //
 function Tn=tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N)
     n = 1000
@@ -60,17 +64,17 @@ function Tn=tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N)
 endfunction
 
 //------------------------------------------------------------------------------
-// Estimation de la probabilité de saturation avant un temps donné.
+// Estimation de la probabilitÃ© de saturation avant un temps donnÃ©.
 //------------------------------------------------------------------------------
 //
 // lambda (reel) : Parametre de la loi d'arrivee des paquets
 // mu (reel) : Parametre de la loi de la duree d'envoie des paquets
-// h : (reel) Pas de la discrétisation en temps.
+// h : (reel) Pas de la discrÃ©tisation en temps.
 // nbSimulation (entier) : Nombre de simulations a effectuer.
-// N (entier) : Taille de la mémoire tampon.
-// S (reel) : Le temps S dans la définition de la probabilité (cf énoncé)
+// N (entier) : Taille de la mÃ©moire tampon.
+// S (reel) : Le temps S dans la dÃ©finition de la probabilitÃ© (cf Ã©noncÃ©)
 //
-// pS (reel) : Estimation de la probabilité de saturation de la mémoire tampon
+// pS (reel) : Estimation de la probabilitÃ© de saturation de la mÃ©moire tampon
 //             avant le temps S.
 //
 function pS=probabiliteSatDiscr(lambda, mu, h, nbSimulations, N, S)
