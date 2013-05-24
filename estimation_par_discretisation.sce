@@ -15,7 +15,7 @@
 // alpha (reel) : La valeur du risque pour l'intervalle de confiance.
 //
 // E (vecteur ligne) : Les espérances correspondant aux temps t.
-// ValConf (vecteur ligne) : L'ecart entre la moyenne empiriaue et les bornes
+// ValConf (vecteur ligne) : L'ecart entre la moyenne empirique et les bornes
 //                          de l'intervalle de confiance
 //
 function [E, ValConf]=esperanceDiscr(lambda, mu, t, h, nbSimulations, alpha)
@@ -27,7 +27,7 @@ function [E, ValConf]=esperanceDiscr(lambda, mu, t, h, nbSimulations, alpha)
         Y = [Y; X(i, ind)]
     end
     x = cdfnor('X', 0., 1., 1-alpha/2, alpha/2)
-    ValConf = x*sqrt(variance(Y, 'r'))/sqrt(nbSimulations)
+    ValConf = 1.96*sqrt(variance(Y, 'r'))/sqrt(nbSimulations)
     E = sum(Y, 'r')/nbSimulations
 endfunction
 
@@ -73,13 +73,18 @@ endfunction
 // nbSimulation (entier) : Nombre de simulations a effectuer.
 // N (entier) : Taille de la mémoire tampon.
 // S (reel) : Le temps S dans la définition de la probabilité (cf énoncé)
+// alpha (reel) : La valeur du risque pour l'intervalle de confiance.
 //
 // pS (reel) : Estimation de la probabilité de saturation de la mémoire tampon
 //             avant le temps S.
+// ValConf (vecteur ligne) : L'ecart entre la moyenne empirique et les bornes
+//                          de l'intervalle de confiance
 //
-function pS=probabiliteSatDiscr(lambda, mu, h, nbSimulations, N, S)
-    Tn = tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N)
-    pS = sum(Tn<S)/nbSimulations
+function [pS, ValConf]=probabiliteSatDiscr(lambda, mu, h, nbSimulations, N, S)
+    Tn = tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N) 
+    Y = 1*(Tn<=S)  
+    pS = sum(Y)/nbSimulations   
+    ValConf = 1.96*sqrt(variance(Y, 'r'))/sqrt(nbSimulations)
 endfunction
 
 

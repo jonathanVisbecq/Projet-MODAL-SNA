@@ -12,16 +12,14 @@
 // t (vecteur ligne) : Temps pour lesquels estimer l'espérance de l'encombrement.
 // nbsimulations : (entier) Le nombre de simulations utilisées pour calculer
 // l'espérance.
-// alpha (reel) : La valeur du risque pour l'intervalle de confiance.
 //
 // E (vecteur ligne) : Les espérances correspondant aux temps t.
 // ValConf (vecteur ligne) : L'ecart entre la moyenne empiriaue et les bornes
-//                          de l'intervalle de confiance
+//                          de l'intervalle de confiance a 95%
 //
-function [E, ValConf]=esperanceEncombrement(lambda, mu, t, nbSimulations, alpha)
+function [E, ValConf]=esperanceEncombrement(lambda, mu, t, nbSimulations)
     X = trajectoireExacte1(lambda, mu, t, nbSimulations)
-    x = cdfnor('X', 0., 1., 1-alpha/2, alpha/2)
-    ValConf = x*sqrt(variance(X, 'r'))/sqrt(nbSimulations)
+    ValConf = 1.96*sqrt(variance(X, 'r'))/sqrt(nbSimulations)
     E = sum(X, 'r')/nbSimulations
 endfunction
 
@@ -69,10 +67,13 @@ endfunction
 //
 // pS (reel) : Estimation de la probabilité de saturation de la mémoire tampon
 //             avant le temps S.
+// ValConf (vecteur ligne) : L'ecart entre la moyenne empirique et les bornes
+//                          de l'intervalle de confiance a 95%
 //
-function pS=probabiliteSaturation(lambda, mu, nbSimulations, N, S)
+function [pS, ValConf]=probabiliteSaturation(lambda, mu, nbSimulations, N, S)
     Tn = tempsDeSaturation(lambda, mu, nbSimulations, N)
-    pS = sum(Tn<S)/nbSimulations
+    pS = sum(Tn<=S)/nbSimulations
+    ValConf = 1.96*sqrt(variance(Tn(Tn<=S), 'r'))/sqrt(nbSimulations)
 endfunction
 
 stacksize(150000000)
