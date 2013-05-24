@@ -1,32 +1,32 @@
 //------------------------------------------------------------------------------
-// Simulation trajectoire exacte sans discrÃ©tisation en temps.
+// Simulation trajectoire exacte sans discrétisation en temps.
 //------------------------------------------------------------------------------
 
 
 
 //------------------------------------------------------------------------------
-// Renvoie une matrice Ã  deux lignes reprÃ©sentant les temps d'arrivÃ© et d'envoie
+// Renvoie une matrice à deux lignes représentant les temps d'arrivé et d'envoie
 // des paquets
 //------------------------------------------------------------------------------
 //
 // lambda : (reel) Parametre de la loi d'arrivee des paquets
 // mu : (reel) Parametre de la loi d'envoi des paquets.
-// tmax : (reel) Temps jusqu'auquel on veut pouvoir simuler le systÃ¨me
-// nbSimulations : (entier) Le nombre de simulations Ã  effectuer
+// tmax : (reel) Temps jusqu'auquel on veut pouvoir simuler le système
+// nbSimulations : (entier) Le nombre de simulations à effectuer
 //
-// T : (matrice) Le nombre de colonnes est le nombre de sauts nÃ©cessaires pour
-//    parvenir au temps tmax. Les lignes correspondent au diffÃ©rentes simulations.
-//    Les valeurs sont les temps successifs d'arrivÃ© des paquets.`
-// V : (matrice) Le nombre de colonnes est le nombre de sauts nÃ©cessaires pour
-//    parvenir au temps tmax. Les lignes correspondent au diffÃ©rentes simulations.
-//    Les valeurs sont les temps successifs de dÃ©part des paquets.
+// T : (matrice) Le nombre de colonnes est le nombre de sauts nécessaires pour
+//    parvenir au temps tmax. Les lignes correspondent au différentes simulations.
+//    Les valeurs sont les temps successifs d'arrivé des paquets.`
+// V : (matrice) Le nombre de colonnes est le nombre de sauts nécessaires pour
+//    parvenir au temps tmax. Les lignes correspondent au différentes simulations.
+//    Les valeurs sont les temps successifs de départ des paquets.
 //
 function [T,V]=simulationExacte(lambda, mu, tmax, nbSimulations)
     T = zeros(nbSimulations, 1)
     T = []
     F = ones(nbSimulations, 1)
     n = 500
-    // Calcul des temps d'arrivÃ©e des paquets. On en ajoute tant que l'on n'a
+    // Calcul des temps d'arrivée des paquets. On en ajoute tant que l'on n'a
     // pas atteint tmax.
     while or(F)
         Tinter = grand(nbSimulations, n, 'exp', 1/lambda)
@@ -35,7 +35,7 @@ function [T,V]=simulationExacte(lambda, mu, tmax, nbSimulations)
     end
 
     
-    // Calcul des temps d'envoie de paquets. V_{i} est le temps de dÃ©part du
+    // Calcul des temps d'envoie de paquets. V_{i} est le temps de départ du
     // paquet i
     E = grand(nbSimulations, length(T(1,:)), 'exp', 1/mu)
     V = [T(:,1)+E(:,1)]
@@ -45,17 +45,17 @@ function [T,V]=simulationExacte(lambda, mu, tmax, nbSimulations)
 endfunction
 
 //------------------------------------------------------------------------------
-// Simule une trajectoire de l'Ã©tat du systÃ¨me Ã  l'aide de la fonction auxiliaire
+// Simule une trajectoire de l'état du système à l'aide de la fonction auxiliaire
 // 'simulationExacte'
 //------------------------------------------------------------------------------
 //
 // lambda : (reel) Parametre de la loi d'arrivee des paquets
 // mu : (reel) Parametre de la loi d'envoi des paquets.
-// x : (vecteur ligne) Temps pour lesquels on dÃ©sire obtenir l'Ã©tat du systÃ¨me
-// nbSimulations : (entier) Le nombre de simulations Ã  effectuer
+// x : (vecteur ligne) Temps pour lesquels on désire obtenir l'état du système
+// nbSimulations : (entier) Le nombre de simulations à effectuer
 //
-// X: (matrice) Valeur de l'encombrement aux instants donnÃ©s par x. Chaque ligne
-//   reprÃ©sente une simulation.
+// X: (matrice) Valeur de l'encombrement aux instants donnés par x. Chaque ligne
+//   représente une simulation.
 //
 function X=trajectoireExacte1(lambda, mu, x, nbSimulations)
     tmax = x($)
@@ -70,20 +70,20 @@ endfunction
 
 
 //------------------------------------------------------------------------------
-// Simule une trajectoire de l'Ã©tat du systÃ¨me sans fonction auxiliaire par la 
-// mÃ©thode de l'Ã©noncÃ©. Ici, on ne choisit pas les temps pour lesquels on calcule
+// Simule une trajectoire de l'état du système sans fonction auxiliaire par la 
+// méthode de l'énoncé. Ici, on ne choisit pas les temps pour lesquels on calcule
 // X: il s'agit des temps pour lesquels l'encombrement varie.
 //------------------------------------------------------------------------------
 //
 // lambda : (reel) Parametre de la loi d'arrivee des paquets
 // mu : (reel) Parametre de la loi d'envoi des paquets.
-// tmax : (reel) Temps jusqu'auquel on veut pouvoir simuler le systÃ¨me
-// nbSimulations : (entier) Le nombre de simulations Ã  effectuer
+// tmax : (reel) Temps jusqu'auquel on veut pouvoir simuler le système
+// nbSimulations : (entier) Le nombre de simulations à effectuer
 //
 // T : (matrice) Temps pour lesquels la valeur de l'encombrement change. Chaque 
-//    ligne reprÃ©sente une simulation.
+//    ligne représente une simulation.
 // X : (vecteur ligne) Valeurs correspondantes de l'encombrement. Chaque ligne
-//    reprÃ©sente une simulation.
+//    représente une simulation.
 //
 function [T,X]=trajectoireExacte2(lambda, mu, tmax, nbSimulations)
     X = zeros(nbSimulations, 1)
@@ -106,18 +106,32 @@ function [T,X]=trajectoireExacte2(lambda, mu, tmax, nbSimulations)
     end
 endfunction
 
+function [T,X]=trajectoireExacte22(lambda, mu, n, nbSimulations)
+    X = zeros(nbSimulations, 1)
+    T = zeros(nbSimulations, 1)
+    Ones = ones(nbSimulations, 1)
+    T1 = grand(nbSimulations, n, 'exp', 1/lambda)
+    T2 = grand(nbSimulations, n, 'exp', 1/(lambda+mu))
+    U = grand(nbSimulations, n, 'def')
+    e = 1*(U<=lambda/(lambda+mu)) + (-1)*(U>lambda/(lambda+mu))
+    for j=1:n
+        T = [T, T(:,$) + (T1(:,j).*(X(:,$)==0) + T2(:,j).*(X(:,$)>0))]
+        X = [X, X(:,$) + ((Ones.*(X(:,$)==0)) + e(:,j).*(X(:,$)>0))]
+    end
+endfunction
+
 
 //------------------------------------------------------------------------------
-// ReprÃ©sente une trajectoire de l'encombrement mÃ©moire.
+// Représente une trajectoire de l'encombrement mémoire.
 //------------------------------------------------------------------------------
 //
 // lambda : (reel) Parametre de la loi d'arrivee des paquets
 // mu : (reel) Parametre de la loi d'envoi des paquets.
-// tmax : (reel) Temps jusqu'auquel on veut pouvoir simuler le systÃ¨me
-// nbPoints: (vecteur ligne) Points en lesquels afficher l'Ã©tat du systÃ¨me, si 
+// tmax : (reel) Temps jusqu'auquel on veut pouvoir simuler le système
+// nbPoints: (vecteur ligne) Points en lesquels afficher l'état du système, si 
 //           l'on utilise 'trajectoireExacte1' pour la simulation
 //
-// traj (string) : (soit 'traj1' soit 'traj2') DÃ©termine quel mÃ©thode on applique pour
+// traj (string) : (soit 'traj1' soit 'traj2') Détermine quel méthode on applique pour
 //        simuler la trajectoire
 //
 function evolutionTrajectoire(lambda, mu, tmax, nbPoints, traj)
@@ -129,7 +143,7 @@ function evolutionTrajectoire(lambda, mu, tmax, nbPoints, traj)
     end
         
     plot2d2(x, X, style=[color('red')])
-    legend('Evolution de l''encombrement mÃ©moire en fonction du temps', pos=-5)
+    legend('Evolution de l''encombrement mémoire en fonction du temps', pos=-5)
     l=get('current_entity')
     l.font_style = 5;
     l.font_size=2

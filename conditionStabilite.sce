@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// DÃ©termination d'un critÃ¨re de stabilitÃ© du processus par mÃ©thode graphique
+// Détermination d'un critère de stabilité du processus par méthode graphique
 //------------------------------------------------------------------------------
 
-// ParamÃ¨tres
+// Paramètres
 lambdaMin = 0.4
 lambdaMax = 0.5
 step = 0.02
@@ -10,7 +10,7 @@ mu = 0.5
 tmax = 4000
 nbSimulations = 200
 
-// Calcul de l'espÃ©rance de l'encombrement en fonction du temps
+// Calcul de l'espérance de l'encombrement en fonction du temps
 t = linspace(0, tmax, tmax/5) 
 E = []
 

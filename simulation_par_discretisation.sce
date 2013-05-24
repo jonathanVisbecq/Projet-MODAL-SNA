@@ -32,8 +32,8 @@ function [T,X]=trajectoireDiscrete(lambda, mu, tmax, h, nbSimulations)
     T = linspace(0, imax*h, imax+1)   
 endfunction
 
-[t,X] = trajectoireDiscrete(0.4,0.5,10000,1, 1)
-disp(size(t))
-disp(size(X))
-plot2d(t,X, style=[color('red')])
+//[t,X] = trajectoireDiscrete(0.4,0.5,10000,1, 1)
+//disp(size(t))
+//disp(size(X))
+//plot2d(t,X, style=[color('red')])
 

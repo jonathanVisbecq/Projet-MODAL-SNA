@@ -2,14 +2,14 @@
 // Calibration du pas de temps.
 //------------------------------------------------------------------------------
 
-scf(2)
+stacksize(150000000)
 
-// ParamÃ¨tres
+// Paramètres
 lambda = 0.5
 mu = 0.51
-tmax = 200
+tmax = 100
 N = 50
-S = 2000
+S = 200
 nbSimulations = 100
 h = 0.05
 
@@ -27,20 +27,33 @@ plot2d(T', V1', style=[color("red"), color("red")])
 V2 = [E2-ValConf2; E2+ValConf2]
 plot2d(T', V2', style=[color("blue"),color("blue")])
 
-title('Evolution de l''esperance de l''encombrement mÃ©moire en fonction du temps', 'fontname', 'Symbol')
+title('Evolution de l''esperance de l''encombrement mémoire en fonction du temps', 'fontname', 5, 'fontsize', 24)
 
-legend("ee", "rr")
+legend("Sans discretisation", "", "avec discretisation", "")
 
 
 // Comparaison des esperances des temps de saturation pour les methodes de simulation 
 // avec et sans discretisation
 
+//[Tn1, Valconf1]=tempsDeSaturation(lambda, mu, nbSimulations, N)
+//[Tn2, Valconf2] = tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N)
+//
+//disp('----- Intervalles de confiance pour l''esperance du temps de saturation -----')
+//disp('Sans discretisation')
+//disp(ps1)
+//disp('Avec discretisation')
+//disp(ps2)
+//
+//
+//
+//// Comparaison des probabilites de depassement memoire pour les methodes de simulation 
+//// avec et sans discretisation
 
-
-
-
-
-
-// Comparaison des probabilites de depassement memoire pour les methodes de simulation 
-// avec et sans discretisation
-
+//ps1 = probabiliteSat(lambda, mu, nbSimulations, N, S)
+//ps2 = probabiliteSatDiscr(lambda, mu, h, nbSimulations, N, S)
+//
+//disp('----- Probabilite de depassement memoire -----')
+//disp('Sans discretisation')
+//disp(ps1)
+//disp('Avec discretisation')
+//disp(ps2)

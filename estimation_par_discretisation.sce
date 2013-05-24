@@ -1,24 +1,23 @@
 //------------------------------------------------------------------------------
-// Estimations utilisant la simulation par discrÃ©tisation en temps
+// Estimations utilisant la simulation par discrétisation en temps
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-// Evolution de l'espÃ©rance de l'encombrement avec le temps
+// Evolution de l'espérance de l'encombrement avec le temps
 //------------------------------------------------------------------------------
 //
 // lambda (reel) : Parametre de la loi d'arrivee des paquets
 // mu (reel) : Parametre de la loi de la duree d'envoie des paquets
-// t (vecteur ligne) : Temps pour lesquels estimer l'espÃ©rance de l'encombrement.
-// h : (reel) Pas de la discrÃ©tisation en temps.
-// nbsimulations : (entier) Le nombre de simulations utilisÃ©es pour calculer
-// l'espÃ©rance.
-// alpha (reel) : La valeur du risque pour l'intervalle de confiance.
+// t (vecteur ligne) : Temps pour lesquels estimer l'espérance de l'encombrement.
+// h : (reel) Pas de la discrétisation en temps.
+// nbsimulations : (entier) Le nombre de simulations utilisées pour calculer
+// l'espérance.
 //
-// E (vecteur ligne) : Les espÃ©rances correspondant aux temps t.
+// E (vecteur ligne) : Les espérances correspondant aux temps t.
 // ValConf (vecteur ligne) : L'ecart entre la moyenne empirique et les bornes
 //                          de l'intervalle de confiance
 //
-function [E, ValConf]=esperanceDiscr(lambda, mu, t, h, nbSimulations, alpha)
+function [E, ValConf]=esperanceDiscr(lambda, mu, t, h, nbSimulations)
     tmax = t($)
     [T,X] = trajectoireDiscrete(lambda, mu, tmax, h, nbSimulations)
     Y = []
@@ -26,7 +25,6 @@ function [E, ValConf]=esperanceDiscr(lambda, mu, t, h, nbSimulations, alpha)
         [ind, occ, inf] = dsearch(t, T)
         Y = [Y; X(i, ind)]
     end
-    x = cdfnor('X', 0., 1., 1-alpha/2, alpha/2)
     ValConf = 1.96*sqrt(variance(Y, 'r'))/sqrt(nbSimulations)
     E = sum(Y, 'r')/nbSimulations
 endfunction
@@ -37,11 +35,11 @@ endfunction
 //
 // lambda (reel) : Parametre de la loi d'arrivee des paquets
 // mu (reel) : Parametre de la loi de la duree d'envoie des paquets
-// h : (reel) Pas de la discrÃ©tisation en temps.
+// h : (reel) Pas de la discrétisation en temps.
 // nbSimulation (entier) : Nombre de simulations a effectuer.
-// N (entier) : Taille de la mÃ©moire tampon.
+// N (entier) : Taille de la mémoire tampon.
 //
-// Tn (vecteur ligne) : Les temps de saturation donnÃ©es par les simulations
+// Tn (vecteur ligne) : Les temps de saturation données par les simulations
 //
 function Tn=tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N)
     n = 1000
@@ -64,32 +62,23 @@ function Tn=tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N)
 endfunction
 
 //------------------------------------------------------------------------------
-// Estimation de la probabilitÃ© de saturation avant un temps donnÃ©.
+// Estimation de la probabilité de saturation avant un temps donné.
 //------------------------------------------------------------------------------
 //
 // lambda (reel) : Parametre de la loi d'arrivee des paquets
 // mu (reel) : Parametre de la loi de la duree d'envoie des paquets
-// h : (reel) Pas de la discrÃ©tisation en temps.
+// h : (reel) Pas de la discrétisation en temps.
 // nbSimulation (entier) : Nombre de simulations a effectuer.
-// N (entier) : Taille de la mÃ©moire tampon.
-// S (reel) : Le temps S dans la dÃ©finition de la probabilitÃ© (cf Ã©noncÃ©)
-// alpha (reel) : La valeur du risque pour l'intervalle de confiance.
+// N (entier) : Taille de la mémoire tampon.
+// S (reel) : Le temps S dans la définition de la probabilité (cf énoncé)
 //
-// pS (reel) : Estimation de la probabilitÃ© de saturation de la mÃ©moire tampon
+// pS (reel) : Estimation de la probabilité de saturation de la mémoire tampon
 //             avant le temps S.
-// ValConf (vecteur ligne) : L'ecart entre la moyenne empirique et les bornes
-//                          de l'intervalle de confiance
 //
-function [pS, ValConf]=probabiliteSatDiscr(lambda, mu, h, nbSimulations, N, S)
+function pS=probabiliteSatDiscr(lambda, mu, h, nbSimulations, N, S)
     Tn = tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N) 
-    Y = 1*(Tn<=S)  
-    pS = sum(Y)/nbSimulations   
-    ValConf = 1.96*sqrt(variance(Y, 'r'))/sqrt(nbSimulations)
+    pS = sum(Tn<=S)/nbSimulations   
 endfunction
-
-
-
-
 
 
 //n = 1000
@@ -100,4 +89,4 @@ endfunction
 //Tn = tempsDeSaturationDiscr(0.55, 0.5, 0.1, 1000, 50)
 //disp(sum(Tn)/1000)
 
-disp(probabiliteSatDiscr(0.6, 0.5, 0.1, 1000, 50, 400))
+//disp(probabiliteSatDiscr(0.6, 0.5, 0.1, 1000, 50, 400))
