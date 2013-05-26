@@ -106,20 +106,6 @@ function [T,X]=trajectoireExacte2(lambda, mu, tmax, nbSimulations)
     end
 endfunction
 
-function [T,X]=trajectoireExacte22(lambda, mu, n, nbSimulations)
-    X = zeros(nbSimulations, 1)
-    T = zeros(nbSimulations, 1)
-    Ones = ones(nbSimulations, 1)
-    T1 = grand(nbSimulations, n, 'exp', 1/lambda)
-    T2 = grand(nbSimulations, n, 'exp', 1/(lambda+mu))
-    U = grand(nbSimulations, n, 'def')
-    e = 1*(U<=lambda/(lambda+mu)) + (-1)*(U>lambda/(lambda+mu))
-    for j=1:n
-        T = [T, T(:,$) + (T1(:,j).*(X(:,$)==0) + T2(:,j).*(X(:,$)>0))]
-        X = [X, X(:,$) + ((Ones.*(X(:,$)==0)) + e(:,j).*(X(:,$)>0))]
-    end
-endfunction
-
 
 //------------------------------------------------------------------------------
 // Représente une trajectoire de l'encombrement mémoire.

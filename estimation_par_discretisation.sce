@@ -2,6 +2,7 @@
 // Estimations utilisant la simulation par discrétisation en temps
 //------------------------------------------------------------------------------
 
+
 //------------------------------------------------------------------------------
 // Evolution de l'espérance de l'encombrement avec le temps
 //------------------------------------------------------------------------------
@@ -19,10 +20,10 @@
 //
 function [E, ValConf]=esperanceDiscr(lambda, mu, t, h, nbSimulations)
     tmax = t($)
-    [T,X] = trajectoireDiscrete(lambda, mu, tmax, h, nbSimulations)
+    [T,X] = trajectoireDiscrete2(lambda, mu, tmax, h, nbSimulations)
     Y = []
     for i=1:nbSimulations
-        [ind, occ, inf] = dsearch(t, T)
+        [ind, occ, inf] = dsearch(t, T(i, :))
         Y = [Y; X(i, ind)]
     end
     ValConf = 1.96*sqrt(variance(Y, 'r'))/sqrt(nbSimulations)
@@ -49,17 +50,41 @@ function Tn=tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N)
     Ones = ones(nbSimulations, 1)
     while or(F)
         i = 1
-        IncrA = 1*(grand(nbSimulations, n, 'def')<=(lambda*h))
-        IncrD = (-1)*(grand(nbSimulations, n, 'def')<=(mu*h))
+        T1 = h*grand(nbSimulations, n, 'geom', lambda*h)
+        T2 = h*grand(nbSimulations, n, 'geom', (lambda+mu)*h)
+        U = grand(nbSimulations, n, 'def')
+        e = 1*(U<=lambda/(lambda+mu)) + (-1)*(U>lambda/(lambda+mu))
         while or(F) & (i<=n)
-            X = X + F.*(IncrA(:,i).*(X==0) + (IncrD(:,i) + IncrA(:,i)).*(X>0))         
-            Tn = Tn + F.*Ones
+            Tn = Tn + F.*(T1(:,i).*(X==0) + T2(:,i).*(X>0))
+            X = X + F.*((Ones.*(X==0)) + e(:,i).*(X>0))
             F = X<N
             i = i+1
         end
     end
-    Tn = (Tn*h)'
+    Tn = Tn'
 endfunction
+
+
+//------------------------------------------------------------------------------
+// Estimation de l'espérance du temps de saturation de la memoire
+//------------------------------------------------------------------------------
+//
+// lambda (reel) : Parametre de la loi d'arrivee des paquets
+// mu (reel) : Parametre de la loi de la duree d'envoie des paquets
+// h : (reel) Pas de la discrétisation en temps.
+// nbSimulation (entier) : Nombre de simulations a effectuer.
+// N (entier) : Taille de la mémoire tampon.
+//
+// ETn (reel) : Approximation de l'esperance du temps de saturation
+// ValConf (vecteur ligne) : L'ecart entre la moyenne empirique et les bornes
+//                          de l'intervalle de confiance
+//
+function [ETn, ValConf]=espTpsSatDiscr(lambda, mu, h, nbSimulations, N)
+    Tn = tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N)
+    ETn = sum(Tn)/nbSimulations
+    ValConf = 1.96*sqrt(variance(Tn, 'c'))/sqrt(nbSimulations)
+endfunction
+
 
 //------------------------------------------------------------------------------
 // Estimation de la probabilité de saturation avant un temps donné.
@@ -83,10 +108,12 @@ endfunction
 
 //n = 1000
 //t = linspace(0, n, n+1)
-//E = esperanceDiscr(0.5, 0.5, t, 1, 500)
+//E = esperanceDiscr(0.48, 0.5, t, 0.1, 400)
 //plot(t,E)
 //
+
+//stacksize(150000000)
 //Tn = tempsDeSaturationDiscr(0.55, 0.5, 0.1, 1000, 50)
 //disp(sum(Tn)/1000)
 
-//disp(probabiliteSatDiscr(0.6, 0.5, 0.1, 1000, 50, 400))
+//disp(probabiliteSatDiscr(0.6, 0.5, 0.1, 1000, 50, 400))n

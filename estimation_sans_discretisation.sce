@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 
 
+
 //------------------------------------------------------------------------------
 // Evolution de l'espérance de l'encombrement avec le temps
 //------------------------------------------------------------------------------
@@ -52,6 +53,27 @@ function Tn=tempsDeSaturation(lambda, mu, nbSimulations, N)
     end
     Tn = Tn'
 endfunction
+
+//------------------------------------------------------------------------------
+// Estimation de l'espérance du temps de saturation de la memoire
+//------------------------------------------------------------------------------
+//
+// lambda (reel) : Parametre de la loi d'arrivee des paquets
+// mu (reel) : Parametre de la loi de la duree d'envoie des paquets
+// nbSimulation (entier) : Nombre de simulations a effectuer.
+// N (entier) : Taille de la mémoire tampon.
+//
+// ETn (reel) : Approximation de l'esperance du temps de saturation
+// ValConf (vecteur ligne) : L'ecart entre la moyenne empirique et les bornes
+//                          de l'intervalle de confiance
+//
+function [ETn, ValConf]=espTpsSat(lambda, mu, nbSimulations, N)
+    Tn=tempsDeSaturation(lambda, mu, nbSimulations, N)
+    ETn = sum(Tn)/nbSimulations
+    ValConf = 1.96*sqrt(variance(Tn, 'c'))/sqrt(nbSimulations)
+endfunction
+
+
 
 //------------------------------------------------------------------------------
 // Estimation de la probabilité de saturation avant un temps donné.
