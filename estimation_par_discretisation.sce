@@ -17,7 +17,7 @@
 // E (vecteur ligne) : Les espérances correspondant aux temps t.
 // ValConf (vecteur ligne) : L'ecart entre la moyenne empirique et les bornes
 //                          de l'intervalle de confiance
-//
+//z
 function [E, ValConf]=esperanceDiscr(lambda, mu, t, h, nbSimulations)
     tmax = t($)
     [T,X] = trajectoireDiscrete2(lambda, mu, tmax, h, nbSimulations)
@@ -108,12 +108,12 @@ endfunction
 
 //n = 1000
 //t = linspace(0, n, n+1)
-//E = esperanceDiscr(0.48, 0.5, t, 0.1, 400)
+//E = esperanceDiscr(0.45, 0.5, t, 0.01, 200)
 //plot(t,E)
 //
 
-//stacksize(150000000)
-//Tn = tempsDeSaturationDiscr(0.55, 0.5, 0.1, 1000, 50)
-//disp(sum(Tn)/1000)
+stacksize(150000000)
+e = espTpsSatDiscr(0.45, 0.5, 0.05, 10000, 2)
+disp(e)
 
 //disp(probabiliteSatDiscr(0.6, 0.5, 0.1, 1000, 50, 400))n

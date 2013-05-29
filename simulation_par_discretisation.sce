@@ -6,7 +6,7 @@
 
 //------------------------------------------------------------------------------
 // Simule une trajectoire de l'état du système à l'aide d'une discrétisation en
-// temps.
+// temps. ( /!\ Faux, ne plus utiliser /!\ )
 //------------------------------------------------------------------------------
 //
 // lambda : (reel) Parametre de la loi d'arrivee des paquets
@@ -32,6 +32,22 @@ function [T,X]=trajectoireDiscrete(lambda, mu, tmax, h, nbSimulations)
     T = linspace(0, imax*h, imax+1)   
 endfunction
 
+
+//------------------------------------------------------------------------------
+// Simule une trajectoire de l'état du système à l'aide d'une discrétisation en
+// temps.
+//------------------------------------------------------------------------------
+//
+// lambda : (reel) Parametre de la loi d'arrivee des paquets
+// mu : (reel) Parametre de la loi d'envoi des paquets.
+// tmax : (reel) Temps jusqu'auquel on désire simuler le système.
+// h : (reel) Pas de la discrétisation en temps.
+// nbSimulations : (entier) Le nombre de simulations à effectuer
+//
+// T : (vecteur ligne) Discrétisation du temps entre 0 et tmax avec un pas h.
+// X: (matrice) Valeur de l'encombrement aux instants donnés par t. Chaque ligne 
+//    correspond à une simulations.
+//
 function [T,X]=trajectoireDiscrete2(lambda, mu, tmax, h, nbSimulations)
     X = zeros(nbSimulations, 1)
     T = zeros(nbSimulations, 1)
@@ -53,6 +69,6 @@ function [T,X]=trajectoireDiscrete2(lambda, mu, tmax, h, nbSimulations)
     end
 endfunction
 
-//[t,X] = trajectoireDiscrete2(0.6,0.5,10000,0.01, 1)
-//plot2d(t,X, style=[color('red')])
+[t,X] = trajectoireDiscrete2(0.45,0.5,10000,0.05, 1)
+plot2d(t,X, style=[color('red')])
 

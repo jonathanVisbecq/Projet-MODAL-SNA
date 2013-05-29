@@ -102,8 +102,8 @@ endfunction
 //plot(t,E)
 
 
-//Tn = tempsDeSaturation(0.55, 0.5, 1000, 50)
-//disp(sum(Tn)/1000)
+e = espTpsSat(0.51, 0.5, 10000, 10)
+disp(e)
 
 
 //disp(probabiliteSat(0.6, 0.5, 1000, 50, 400))
