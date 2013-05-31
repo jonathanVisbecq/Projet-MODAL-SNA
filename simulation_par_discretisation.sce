@@ -69,6 +69,6 @@ function [T,X]=trajectoireDiscrete2(lambda, mu, tmax, h, nbSimulations)
     end
 endfunction
 
-[t,X] = trajectoireDiscrete2(0.45,0.5,10000,0.05, 1)
+[t,X] = trajectoireDiscrete2(0.45,0.5,1000,0.05, 1)
 plot2d(t,X, style=[color('red')])
 

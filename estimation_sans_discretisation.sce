@@ -102,7 +102,7 @@ endfunction
 //plot(t,E)
 
 
-e = espTpsSat(0.51, 0.5, 10000, 10)
+e = espTpsSat(0.45, 0.5, 1000, 3)
 disp(e)
 
 

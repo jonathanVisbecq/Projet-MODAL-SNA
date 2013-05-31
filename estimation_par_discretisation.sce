@@ -113,7 +113,7 @@ endfunction
 //
 
 stacksize(150000000)
-e = espTpsSatDiscr(0.45, 0.5, 0.05, 10000, 2)
+e = espTpsSatDiscr(0.2/0.05, 0.5/0.05, 0.05, 1000, 3)
 disp(e)
 
 //disp(probabiliteSatDiscr(0.6, 0.5, 0.1, 1000, 50, 400))n

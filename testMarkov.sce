@@ -9,12 +9,12 @@
 clear;
 stacksize(150000000);
 
+h=0.1
 lambda=0.45
 mu=0.5
-m_max=15;
-N = 2;
-M=25;
-h=0.05
+m_max=10;
+N = 3;
+M=10;
 
 // Definition de P (matrice de transition)
 P = zeros(N+1, N+1)
@@ -48,7 +48,7 @@ for m=1:m_max
     end
     Q(1:N, :) = P(1:N, :)*diag(1+[esp;0])
     Q = (diag(sum(Q, 'c'))^(-1))*Q
-    disp(m/m_max*100)
+    //disp(m/m_max*100)
 end
 
 // Affichage
