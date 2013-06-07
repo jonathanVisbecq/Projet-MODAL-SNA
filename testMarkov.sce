@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// Implementation de l'algorithme du TD envoyÃ© par F. Beynach-Georges dans notre
+// Implementation de l'algorithme du TD envoyé par F. Beynach-Georges dans notre
 // cas
 // 
-// Rq: beaucoup plus prÃ©cis mais pas de gain de temps
+// Rq: beaucoup plus précis mais pas de gain de temps
 //------------------------------------------------------------------------------
 
 
@@ -10,11 +10,11 @@ clear;
 stacksize(150000000);
 
 h=1
-lambda=0.39
+lambda=0.36
 mu=0.4
 m_max=12;
-N = 5;
-M=20;
+N = 10;
+M=17;
 
 // Definition de P (matrice de transition)
 P = zeros(N+1, N+1)
@@ -29,31 +29,31 @@ end
 
 Q=P;
 
-// Algorithme d'Ã©chantillonage prÃ©fÃ©rentiel
+// Algorithme d'échantillonage préférentiel
 esp=zeros(N,1);
 for m=1:m_max
     for i=1:N
         S = 0;        
-//        L = ones(M,1)
-//        X = i*ones(M,1)
-//        F = ones(M,1)
-//        while or(F)
-//            Xs = grand(1, 'markov', Q, X)
-//            L = L.*(diag(P(X,Xs))./diag(Q(X,Xs)))
-//            S = S + h*sum(F.*L)
-//            X = Xs
-//            F = X<(N+1)
-//        end
-        for k=1:M
-            X=i
-            L=1
-            while X<N+1
-                Xs = grand(1, 'markov', Q, X)
-                L = L * P(X, Xs) / Q(X, Xs)
-                S = S + h*L
-                X = Xs
-            end
+        L = ones(M,1)
+        X = i*ones(M,1)
+        F = ones(M,1)
+        while or(F)
+            Xs = grand(1, 'markov', Q, X)
+            L = L.*(diag(P(X,Xs))./diag(Q(X,Xs)))
+            S = S + h*sum(F.*L)
+            X = Xs
+            F = X<(N+1)
         end
+//        for k=1:M
+//            X=i
+//            L=1
+//            while X<N+1
+//                Xs = grand(1, 'markov', Q, X)
+//                L = L * P(X, Xs) / Q(X, Xs)
+//                S = S + h*L
+//                X = Xs
+//            end
+//        end
         esp(i) = max(1, S/M)
     end
     Q(1:N, :) = P(1:N, :)*diag(1+[esp;0])

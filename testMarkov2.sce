@@ -1,13 +1,13 @@
 //------------------------------------------------------------------------------
-// Changement de probabilitÃ© pour calculer E[Tn]
+// Changement de probabilité pour calculer E[Tn]
 // 
 //------------------------------------------------------------------------------
 
 clear()
 stacksize(150000000)
 
-N = 20
-nbSimulations = 1000
+N = 40
+nbSimulations = 100
 h = 1
 
 lambda=0.35
@@ -37,9 +37,6 @@ P = matriceTransition(lambda, mu)
 // Definition de Q (matrice de transition du changement de probabilite)
 Q = matriceTransition(new_lambda, new_mu)
 
-p = lambda/(lambda+mu)
-ps = new_lambda/(new_lambda+new_mu)
-
 function Y=f1(K)
     Y = (lambda*h*(1-lambda*h)^(K-1)) ./ (new_lambda*h*(1-new_lambda*h)^(K-1))
 endfunction
@@ -52,38 +49,46 @@ function Y=f3(K)
     Y = (mu*h*(1-(lambda+mu)*h)^(K-1)) ./ (new_mu*h*(1-(new_lambda+new_mu)*h)^(K-1))
 endfunction
 
-
-n = 1000
+stacksize(150000000)
+n = 200
 X = ones(nbSimulations, 1)
 Tn = zeros(nbSimulations, 1)
 F = ones(nbSimulations, 1)
 L = ones(nbSimulations, 1)
 Ones = ones(nbSimulations, 1)
+m = zeros(nbSimulations, 1)
+X2 = X
+p = 1:nbSimulations
 while or(F)
     i = 1
-    T1 = grand(nbSimulations, n, 'geom', new_lambda*h)
-    T2 = grand(nbSimulations, n, 'geom', (new_lambda+new_mu)*h)
+    T1 = grand(nbSimulations, n, 'bin', 1, new_lambda*h)
+    T2 = grand(nbSimulations, n, 'bin', 1, (new_lambda+new_mu)*h)
     U = grand(nbSimulations, n, 'def')
     e = 1*(U<=new_lambda/(new_lambda+new_mu)) + (-1)*(U>new_lambda/(new_lambda+new_mu))
     while or(F) & (i<=n)
-        K = (T1(:,i).*(X==1) + T2(:,i).*(X>1))
-        Tn = Tn + h*F.*K
-        Y = X + F.*((Ones.*(X==1)) + e(:,i).*(X>1))
+        K = (T1(:,i).*(X(:,$)==1) + T2(:,i).*(X(:,$)>1))
+        Tn = Tn + h*F
+//        X2 = X + F.*K(:, $).*((Ones.*(X==1)) + e(:,i).*(X>1))
+        X = [X, X(:,$) + F.*K(:, $).*((Ones.*(X(:,$)==1)) + e(:,i).*(X(:,$)>1))]
+//        for i=p(F)
+//            L(i) = L(i) *Q(X(i), X2(i)) /  P(X(i), X2(i)) 
+//        end
         //L = L .* ((f1(K).*(X==1) + (X>1).*(f2(K).*(e(:, i)==1) + f3(K).*(e(:, i)==-1))) .* F + ~F)
-        for m=1:nbSimulations
-            if Y(m)==X(m)+1 then
-                L(m) = L(m)*f2(K(m))
-            elseif Y(m)==X(m)-1 then
-                L(m) = L(m)*f3(K(m))
-            else
-                L(m) = L(m)*f1(K(m))     
-            end           
-        end
-        F = Y<N+1
-        X = Y
+        F = X(:, $)<N+1
+//        F = X2 < N+1
+//        X = X2
         i = i+1
     end
     //disp('n')
+end
+
+L = ones(nbSimulations, 1)
+for i=1:nbSimulations
+    j = 1
+    while X(i,j)<N+1
+        L(i) = L(i) *Q(X(i, j), X(i, j+1)) /  P(X(i, j), X(i, j+1))
+        j = j+1
+    end
 end
 
 disp(sum(Tn.*L)/nbSimulations)
@@ -173,7 +178,7 @@ disp(sum(Tn.*L)/nbSimulations)
 //// Definition de Q (matrice de transition du changement de probabilite)
 //Q = matriceTransition(new_lambda, new_mu)
 //
-//// Algorithme d'Ã©chantillonage prÃ©fÃ©rentiel
+//// Algorithme d'échantillonage préférentiel
 //n = 500
 //T = zeros(nbSimulations, 1)
 //F = ones(nbSimulations, 1)
