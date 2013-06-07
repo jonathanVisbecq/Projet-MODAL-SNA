@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// Implementation de l'algorithme du TD envoyé par F. Beynach-Georges dans notre
+// Implementation de l'algorithme du TD envoyÃ© par F. Beynach-Georges dans notre
 // cas
 // 
-// Rq: beaucoup plus précis mais pas de gain de temps
+// Rq: beaucoup plus prÃ©cis mais pas de gain de temps
 //------------------------------------------------------------------------------
 
 
@@ -13,7 +13,7 @@ h=1
 lambda=0.36
 mu=0.4
 m_max=12;
-N = 10;
+N = 8;
 M=17;
 
 // Definition de P (matrice de transition)
@@ -29,7 +29,7 @@ end
 
 Q=P;
 
-// Algorithme d'échantillonage préférentiel
+// Algorithme d'Ã©chantillonage prÃ©fÃ©rentiel
 esp=zeros(N,1);
 for m=1:m_max
     for i=1:N
