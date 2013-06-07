@@ -1,23 +1,23 @@
 //------------------------------------------------------------------------------
-// Simule le système avec discrétisation en temps
+// Simule le systÃ¨me avec discrÃ©tisation en temps
 //------------------------------------------------------------------------------
 
 
 
 //------------------------------------------------------------------------------
-// Simule une trajectoire de l'état du système à l'aide d'une discrétisation en
+// Simule une trajectoire de l'Ã©tat du systÃ¨me Ã  l'aide d'une discrÃ©tisation en
 // temps. ( /!\ Faux, ne plus utiliser /!\ )
 //------------------------------------------------------------------------------
 //
 // lambda : (reel) Parametre de la loi d'arrivee des paquets
 // mu : (reel) Parametre de la loi d'envoi des paquets.
-// tmax : (reel) Temps jusqu'auquel on désire simuler le système.
-// h : (reel) Pas de la discrétisation en temps.
-// nbSimulations : (entier) Le nombre de simulations à effectuer
+// tmax : (reel) Temps jusqu'auquel on dÃ©sire simuler le systÃ¨me.
+// h : (reel) Pas de la discrÃ©tisation en temps.
+// nbSimulations : (entier) Le nombre de simulations Ã  effectuer
 //
-// T : (vecteur ligne) Discrétisation du temps entre 0 et tmax avec un pas h.
-// X: (matrice) Valeur de l'encombrement aux instants donnés par t. Chaque ligne 
-//    correspond à une simulations.
+// T : (vecteur ligne) DiscrÃ©tisation du temps entre 0 et tmax avec un pas h.
+// X: (matrice) Valeur de l'encombrement aux instants donnÃ©s par t. Chaque ligne 
+//    correspond Ã  une simulations.
 //
 function [T,X]=trajectoireDiscrete(lambda, mu, tmax, h, nbSimulations)
     imax = ceil(tmax/h)
@@ -34,19 +34,19 @@ endfunction
 
 
 //------------------------------------------------------------------------------
-// Simule une trajectoire de l'état du système à l'aide d'une discrétisation en
+// Simule une trajectoire de l'Ã©tat du systÃ¨me Ã  l'aide d'une discrÃ©tisation en
 // temps.
 //------------------------------------------------------------------------------
 //
 // lambda : (reel) Parametre de la loi d'arrivee des paquets
 // mu : (reel) Parametre de la loi d'envoi des paquets.
-// tmax : (reel) Temps jusqu'auquel on désire simuler le système.
-// h : (reel) Pas de la discrétisation en temps.
-// nbSimulations : (entier) Le nombre de simulations à effectuer
+// tmax : (reel) Temps jusqu'auquel on dÃ©sire simuler le systÃ¨me.
+// h : (reel) Pas de la discrÃ©tisation en temps.
+// nbSimulations : (entier) Le nombre de simulations Ã  effectuer
 //
-// T : (vecteur ligne) Discrétisation du temps entre 0 et tmax avec un pas h.
-// X: (matrice) Valeur de l'encombrement aux instants donnés par t. Chaque ligne 
-//    correspond à une simulations.
+// T : (vecteur ligne) DiscrÃ©tisation du temps entre 0 et tmax avec un pas h.
+// X: (matrice) Valeur de l'encombrement aux instants donnÃ©s par t. Chaque ligne 
+//    correspond Ã  une simulations.
 //
 function [T,X]=trajectoireDiscrete2(lambda, mu, tmax, h, nbSimulations)
     X = zeros(nbSimulations, 1)
@@ -69,6 +69,6 @@ function [T,X]=trajectoireDiscrete2(lambda, mu, tmax, h, nbSimulations)
     end
 endfunction
 
-[t,X] = trajectoireDiscrete2(0.45,0.5,1000,0.05, 1)
+[t,X] = trajectoireDiscrete2(0.39, 0.4,500,1, 1)
 plot2d(t,X, style=[color('red')])
 

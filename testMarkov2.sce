@@ -1,17 +1,17 @@
 //------------------------------------------------------------------------------
-// Changement de probabilité pour calculer E[Tn]
+// Changement de probabilitÃ© pour calculer E[Tn]
 // 
 //------------------------------------------------------------------------------
 
-clear
+clear()
 stacksize(150000000)
 
-N = 3
+N = 20
 nbSimulations = 1000
-h = 0.05
+h = 1
 
-lambda=0.2/h
-mu=0.5/h
+lambda=0.35
+mu=0.4
 
 new_lambda = mu
 new_mu = lambda
@@ -37,31 +37,109 @@ P = matriceTransition(lambda, mu)
 // Definition de Q (matrice de transition du changement de probabilite)
 Q = matriceTransition(new_lambda, new_mu)
 
-//n = 1000
-//X1 = ones(nbSimulations, 1)
-//X2 = ones(nbSimulations, 1)
-//Tn = zeros(nbSimulations, 1)
-//F = ones(nbSimulations, 1)
-//L = ones(nbSimulations, 1)
-//Ones = ones(nbSimulations, 1)
-//while or(F)
-//    i = 1
-//    T1 = grand(nbSimulations, n, 'geom', new_lambda*h)
-//    T2 = grand(nbSimulations, n, 'geom', (new_lambda+new_mu)*h)
-//    U = grand(nbSimulations, n, 'def')
-//    e = 1*(U<=new_lambda/(new_lambda+new_mu)) + (-1)*(U>new_lambda/(new_lambda+new_mu))
-//    while or(F) & (i<=n)
-//        K = (T1(:,i).*(X1==1) + T2(:,i).*(X1>1))
-//        Tn = Tn + h*F.*K
-//        X2 = X1 + F.*((Ones.*(X1==1)) + e(:,i).*(X1>1))
-//        L = L .* ( ((diag(P(X1, X2))./diag(Q(X1, X2))) .* (diag(P(X1, X1))./diag(Q(X1, X1))).^(K-1)) .* F + ~F )
-//        F = X2<N+1
-//        X1 = X2
-//        i = i+1
-//    end
+p = lambda/(lambda+mu)
+ps = new_lambda/(new_lambda+new_mu)
+
+function Y=f1(K)
+    Y = (lambda*h*(1-lambda*h)^(K-1)) ./ (new_lambda*h*(1-new_lambda*h)^(K-1))
+endfunction
+
+function Y=f2(K)
+    Y = (lambda*h*(1-(lambda+mu)*h)^(K-1)) ./ (new_lambda*h*(1-(new_lambda+new_mu)*h)^(K-1))
+endfunction
+
+function Y=f3(K)
+    Y = (mu*h*(1-(lambda+mu)*h)^(K-1)) ./ (new_mu*h*(1-(new_lambda+new_mu)*h)^(K-1))
+endfunction
+
+
+n = 1000
+X = ones(nbSimulations, 1)
+Tn = zeros(nbSimulations, 1)
+F = ones(nbSimulations, 1)
+L = ones(nbSimulations, 1)
+Ones = ones(nbSimulations, 1)
+while or(F)
+    i = 1
+    T1 = grand(nbSimulations, n, 'geom', new_lambda*h)
+    T2 = grand(nbSimulations, n, 'geom', (new_lambda+new_mu)*h)
+    U = grand(nbSimulations, n, 'def')
+    e = 1*(U<=new_lambda/(new_lambda+new_mu)) + (-1)*(U>new_lambda/(new_lambda+new_mu))
+    while or(F) & (i<=n)
+        K = (T1(:,i).*(X==1) + T2(:,i).*(X>1))
+        Tn = Tn + h*F.*K
+        Y = X + F.*((Ones.*(X==1)) + e(:,i).*(X>1))
+        //L = L .* ((f1(K).*(X==1) + (X>1).*(f2(K).*(e(:, i)==1) + f3(K).*(e(:, i)==-1))) .* F + ~F)
+        for m=1:nbSimulations
+            if Y(m)==X(m)+1 then
+                L(m) = L(m)*f2(K(m))
+            elseif Y(m)==X(m)-1 then
+                L(m) = L(m)*f3(K(m))
+            else
+                L(m) = L(m)*f1(K(m))     
+            end           
+        end
+        F = Y<N+1
+        X = Y
+        i = i+1
+    end
+    //disp('n')
+end
+
+disp(sum(Tn.*L)/nbSimulations)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ----- /!\ INUTILE /!\ -----
+
+//n = 100
+//TnL = 0
+//for m=1:nbSimulations
+//   tn = 0
+//   x1 = 1
+//   x2 = 1
+//   l = 1
+//   while(x1 < N+1)
+//       i = 1
+//       T1 = grand(1, n, 'geom', new_lambda*h)
+//       T2 = grand(1, n, 'geom', (new_lambda+new_mu)*h)
+//       U = grand(1, n, 'def')
+//       E = 1*(U<=new_lambda/(new_lambda+new_mu)) + (-1)*(U>new_lambda/(new_lambda+new_mu))
+//       while(x1<N+1 & i<=n)
+//           k = T1(i)*(x1==1) + T2(i)*(x1>1)
+//           tn = tn + h*k
+//           x2 = x1 + ((x1==1) + E(i)*(x1>1))
+//           l = l * P(x1, x2)/Q(x1, x2) * (P(x1, x1)/Q(x2, x2))^(k-1)
+//           i = i + 1
+//       end
+//   end 
+//   TnL = [TnL, tn*l]
 //end
 //
-//disp(sum(Tn.*L)/nbSimulations)
+//disp(sum(TnL)/nbSimulations)
+
 
 
 
@@ -95,27 +173,27 @@ Q = matriceTransition(new_lambda, new_mu)
 //// Definition de Q (matrice de transition du changement de probabilite)
 //Q = matriceTransition(new_lambda, new_mu)
 //
-//// Algorithme d'échantillonage préférentiel
-n = 500
-T = zeros(nbSimulations, 1)
-F = ones(nbSimulations, 1)
-X = ones(nbSimulations, 1)
-while or(F)
-    Y = grand(n, 'markov', Q, X)
-    L = ones(nbSimulations, 1)
-    for i=1:(n-1)
-        A = diag(P(Y(:,i), Y(:,i+1))) ./ diag(Q(Y(:,i), Y(:, i+1)))
-        L = L .* (A.* F + ~F)
-//        for k=1:nbSimulations
-//             L(k) = L(k) * (P(Y(k, i), Y(k, i+1))/Q(Y(k, i), Y(k, i+1)) * F(k) + ~F(k))
-//        end
-        T = T + h*F
-        F = Y(:, i+1) < N+1
-    end
-    X = Y(:, $)
-end
-
-disp(sum(T.*L)/nbSimulations)
+//// Algorithme d'Ã©chantillonage prÃ©fÃ©rentiel
+//n = 500
+//T = zeros(nbSimulations, 1)
+//F = ones(nbSimulations, 1)
+//X = ones(nbSimulations, 1)
+//while or(F)
+//    Y = grand(n, 'markov', Q, X)
+//    L = ones(nbSimulations, 1)
+//    for i=1:(n-1)
+//        A = diag(P(Y(:,i), Y(:,i+1))) ./ diag(Q(Y(:,i), Y(:, i+1)))
+//        L = L .* (A.* F + ~F)
+////        for k=1:nbSimulations
+////             L(k) = L(k) * (P(Y(k, i), Y(k, i+1))/Q(Y(k, i), Y(k, i+1)) * F(k) + ~F(k))
+////        end
+//        T = T + h*F
+//        F = Y(:, i+1) < N+1
+//    end
+//    X = Y(:, $)
+//end
+//
+//disp(sum(T.*L)/nbSimulations)
 
 
 

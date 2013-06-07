@@ -4,13 +4,13 @@
 
 stacksize(150000000)
 
-// Paramètres
+// ParamÃ¨tres
 lambda = 0.52
 mu = 0.5
 tmax = 2000
 N = 50
 S = 400
-nbSimulations = 100
+nbSimulations = 200
 h = 0.05
 
 // Comparaison de l'esperance de l'encombrement en fonction du temps pour les methodes de simulation avec et sans discretisation.
@@ -26,7 +26,7 @@ plot2d(T', V1', style=[color("red"), color("red")])
 V2 = [E2-ValConf2; E2+ValConf2]
 plot2d(T', V2', style=[color("blue"),color("blue")])
 
-title('Evolution de l''esperance de l''encombrement mémoire en fonction du temps')
+title('Intervalles de confiance de l''encombrement mÃ©moire en fonction du temps')
 
 legend("Sans discretisation", "", "avec discretisation", "")
 
