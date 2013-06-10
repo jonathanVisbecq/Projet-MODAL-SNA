@@ -10,14 +10,14 @@ stacksize(150000000)
 // Paramètres
 lambda=0.45
 mu=0.55
-N = 20
+N = 10
 
 // Nombre de simulations a effectuer
-nbSimulations = 2000
+nbSimulations = 1000
 // Valeur du pas de discrétisation
 h = 0.05
 // Nombre de variables aléatoires à simuler à chaque fois que nécessaire
-n = 1000
+n = 200
 
 function [p, e, eConf]=probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
     Tps = []
@@ -38,7 +38,7 @@ function [p, e, eConf]=probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
         end
         if X==N then
             nb = nb + 1
-            Tps = [Tps, Tn]
+            Tps = [Tps, Tn+h]
         end
     end
     p = nb/nbSimulations
@@ -46,7 +46,31 @@ function [p, e, eConf]=probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
     eConf = 1.96*sqrt(variance(Tps))/sqrt(nbSimulations)
 endfunction
 
-[p, e, eConf] = probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
+
+Ed = []
+Eu = []
+Fu = []
+Fd = []
+
+m = 18
+for N=1:m
+    [p, e, eConf] = probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
+    [l, lConf] = longueurExcursion(lambda, mu, nbSimulations, h, n)
+    [ETn, ValConf]=espTpsSatDiscr(lambda, mu, h, nbSimulations, N, n)
+    Eu = [Eu, ((1-p)/p)*(l+lConf) + e + eConf]
+    Ed = [Ed, ((1-p)/p)*(l-lConf) + e - eConf]
+    Fu = [Fu, ETn+ValConf]
+    Fd = [Fd, ETn-ValConf]
+end
+
+plot2d(1:m, Eu, style=5)
+plot2d(1:m, Ed, style=5)
+plot2d(1:m, Fu, style=4)
+plot2d(1:m, Fd, style=4)
+
+
+//disp(((1-p)/p)*(l+lConf) + e + eConf, ((1-p)/p)*l + e, ((1-p)/p)*(l-lConf) + e - eConf)
+//disp(ETn+ValConf, ETn, ETn-ValConf)
 
 //disp('Nombre de réalisations de l''évènement:')
 //disp(nb)
@@ -59,13 +83,8 @@ endfunction
 //E = sum(Tps)/length(Tps)
 //Valconf = 1.96 * sqrt(variance(Tps)) / sqrt(length(Tps))
 //disp(E+Valconf, E, E-Valconf)
+//
 
-[l, lConf] = longueurExcursion(lambda, mu, nbSimulations, h, n)
-p = ((mu/lambda)-1)/(((mu/lambda)^N)-1)
-disp(((1-p)/p)*(l+lConf) + e + eConf, ((1-p)/p)*l + e, ((1-p)/p)*(l-lConf) + e - eConf)
-
-[ETn, ValConf]=espTpsSatDiscr(lambda, mu, h, nbSimulations, N)
-disp(ETn+ValConf, ETn, ETn-ValConf)
 //
 //disp(p)
 //disp(((mu/lambda)-1)/(((mu/lambda)^N)-1))

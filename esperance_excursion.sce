@@ -33,7 +33,7 @@ function [l, lConf]=longueurExcursion(lambda, mu, nbSimulations, h, n)
                 i = i+1;
             end
         end
-        Tps = [Tps, Tn];
+        Tps = [Tps, Tn+h];
     end
     l = sum(Tps)/nbSimulations
     lConf = 1.96*sqrt(variance(Tps))/sqrt(nbSimulations)

@@ -42,8 +42,7 @@ endfunction
 //
 // Tn (vecteur ligne) : Les temps de saturation données par les simulations
 //
-function Tn=tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N)
-    n = 1000
+function Tn=tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N, n)
     X = zeros(nbSimulations, 1)
     Tn = zeros(nbSimulations, 1)
     F = ones(nbSimulations, 1)
@@ -80,8 +79,8 @@ endfunction
 // ValConf (vecteur ligne) : L'ecart entre la moyenne empirique et les bornes
 //                          de l'intervalle de confiance
 //
-function [ETn, ValConf]=espTpsSatDiscr(lambda, mu, h, nbSimulations, N)
-    Tn = tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N)
+function [ETn, ValConf]=espTpsSatDiscr(lambda, mu, h, nbSimulations, N, n)
+    Tn = tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N, n)
     ETn = sum(Tn)/nbSimulations
     ValConf = 1.96*sqrt(variance(Tn, 'c'))/sqrt(nbSimulations)
 endfunction
@@ -101,13 +100,13 @@ endfunction
 // pS (reel) : Estimation de la probabilité de saturation de la mémoire tampon
 //             avant le temps S.
 //
-function pS=probabiliteSatDiscr(lambda, mu, h, nbSimulations, N, S)
-    Tn = tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N) 
+function pS=probabiliteSatDiscr(lambda, mu, h, nbSimulations, N, S, n)
+    Tn = tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N, n) 
     pS = sum(Tn<=S)/nbSimulations   
 endfunction
 
 stacksize(150000000)
-[E, Valconf] = espTpsSatDiscr(0.45, 0.55, 0.05, 1000, 10)
+[E, Valconf] = espTpsSatDiscr(0.45, 0.55, 0.05, 1000, 10, 200)
 disp(E)
 disp(E+Valconf, E-Valconf)
 
