@@ -1,14 +1,15 @@
 //------------------------------------------------------------------------------
-// Changement de probabilité pour calculer E[Tn]
+// Changement de probabilit� na�f en modifiant lambda et mu pour calculer E[Tn]
 // 
 //------------------------------------------------------------------------------
 
 clear()
 stacksize(150000000)
 
-N = 10
+N = 3
 nbSimulations = 1000
 h = 1
+n = 200
 
 lambda=0.36
 mu=0.4
@@ -37,20 +38,20 @@ P = matriceTransition(lambda, mu)
 // Definition de Q (matrice de transition du changement de probabilite)
 Q = matriceTransition(new_lambda, new_mu)
 
-function Y=f1(K)
-    Y = (lambda*h*(1-lambda*h)^(K-1)) ./ (new_lambda*h*(1-new_lambda*h)^(K-1))
-endfunction
-
-function Y=f2(K)
-    Y = (lambda*h*(1-(lambda+mu)*h)^(K-1)) ./ (new_lambda*h*(1-(new_lambda+new_mu)*h)^(K-1))
-endfunction
-
-function Y=f3(K)
-    Y = (mu*h*(1-(lambda+mu)*h)^(K-1)) ./ (new_mu*h*(1-(new_lambda+new_mu)*h)^(K-1))
-endfunction
+//function Y=f1(K)
+//    Y = (lambda*h*(1-lambda*h)^(K-1)) ./ (new_lambda*h*(1-new_lambda*h)^(K-1))
+//endfunction
+//
+//function Y=f2(K)
+//    Y = (lambda*h*(1-(lambda+mu)*h)^(K-1)) ./ (new_lambda*h*(1-(new_lambda+new_mu)*h)^(K-1))
+//endfunction
+//
+//function Y=f3(K)
+//    Y = (mu*h*(1-(lambda+mu)*h)^(K-1)) ./ (new_mu*h*(1-(new_lambda+new_mu)*h)^(K-1))
+//endfunction
 
 stacksize(150000000)
-n = 200
+
 //X = ones(nbSimulations, 1)
 //Tn = zeros(nbSimulations, 1)
 //F = ones(nbSimulations, 1)
@@ -107,145 +108,3 @@ ValConf = 1.96*sqrt(variance(T, 'c'))/sqrt(nbSimulations)
 E = sum(T, 'c')/nbSimulations
 disp(E)
 disp(E+ValConf, E-ValConf)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ----- /!\ INUTILE /!\ -----
-
-//n = 100
-//TnL = 0
-//for m=1:nbSimulations
-//   tn = 0
-//   x1 = 1
-//   x2 = 1
-//   l = 1
-//   while(x1 < N+1)
-//       i = 1
-//       T1 = grand(1, n, 'geom', new_lambda*h)
-//       T2 = grand(1, n, 'geom', (new_lambda+new_mu)*h)
-//       U = grand(1, n, 'def')
-//       E = 1*(U<=new_lambda/(new_lambda+new_mu)) + (-1)*(U>new_lambda/(new_lambda+new_mu))
-//       while(x1<N+1 & i<=n)
-//           k = T1(i)*(x1==1) + T2(i)*(x1>1)
-//           tn = tn + h*k
-//           x2 = x1 + ((x1==1) + E(i)*(x1>1))
-//           l = l * P(x1, x2)/Q(x1, x2) * (P(x1, x1)/Q(x2, x2))^(k-1)
-//           i = i + 1
-//       end
-//   end 
-//   TnL = [TnL, tn*l]
-//end
-//
-//disp(sum(TnL)/nbSimulations)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//// Definition de P (matrice de transition du systeme discretise)
-//P = matriceTransition(lambda, mu)
-//
-//// Definition de Q (matrice de transition du changement de probabilite)
-//Q = matriceTransition(new_lambda, new_mu)
-//
-//// Algorithme d'échantillonage préférentiel
-//n = 500
-//T = zeros(nbSimulations, 1)
-//F = ones(nbSimulations, 1)
-//X = ones(nbSimulations, 1)
-//while or(F)
-//    Y = grand(n, 'markov', Q, X)
-//    L = ones(nbSimulations, 1)
-//    for i=1:(n-1)
-//        A = diag(P(Y(:,i), Y(:,i+1))) ./ diag(Q(Y(:,i), Y(:, i+1)))
-//        L = L .* (A.* F + ~F)
-////        for k=1:nbSimulations
-////             L(k) = L(k) * (P(Y(k, i), Y(k, i+1))/Q(Y(k, i), Y(k, i+1)) * F(k) + ~F(k))
-////        end
-//        T = T + h*F
-//        F = Y(:, i+1) < N+1
-//    end
-//    X = Y(:, $)
-//end
-//
-//disp(sum(T.*L)/nbSimulations)
-
-
-
-
-
-
-
-
-
-
-
-//
-//esp=zeros(N,1);
-//for m=1:m_max
-//    for i=1:N
-//        S=0;        
-//        L = ones(M,1)
-//        X = i*ones(M,1)
-//        F = ones(M,1)
-//        while or(F)
-//            Xs = grand(1, 'markov', Q, X)
-//            L = L.*(diag(P(X,Xs))./diag(Q(X,Xs)))
-//            S = S + sum(F.*L)
-//            X = Xs
-//            F = X<(N+1)
-//        end
-//        esp(i) = max(1, S/M)
-//    end
-//    Q(1:N, :) = P(1:N, :)*diag(1+[esp;0])
-//    Q = (diag(sum(Q, 'c'))^(-1))*Q
-//    disp(m/m_max*100)
-//end
-//
-//// Affichage
-//disp(esp(1))

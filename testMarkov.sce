@@ -1,8 +1,5 @@
 //------------------------------------------------------------------------------
-// Implementation de l'algorithme du TD envoy√© par F. Beynach-Georges dans notre
-// cas
-// 
-// Rq: beaucoup plus pr√©cis mais pas de gain de temps
+// Changement de probabilitÈ adaptatif
 //------------------------------------------------------------------------------
 
 
@@ -10,11 +7,12 @@ clear;
 stacksize(150000000);
 
 h=1
+m_max=12;
+N = 3;
+M=17;
+
 lambda=0.36
 mu=0.4
-m_max=12;
-N = 8;
-M=17;
 
 // Definition de P (matrice de transition)
 P = zeros(N+1, N+1)
@@ -29,7 +27,7 @@ end
 
 Q=P;
 
-// Algorithme d'√©chantillonage pr√©f√©rentiel
+// Algorithme d'Èchantillonage prÈfÈrentiel
 esp=zeros(N,1);
 for m=1:m_max
     for i=1:N
@@ -44,16 +42,6 @@ for m=1:m_max
             X = Xs
             F = X<(N+1)
         end
-//        for k=1:M
-//            X=i
-//            L=1
-//            while X<N+1
-//                Xs = grand(1, 'markov', Q, X)
-//                L = L * P(X, Xs) / Q(X, Xs)
-//                S = S + h*L
-//                X = Xs
-//            end
-//        end
         esp(i) = max(1, S/M)
     end
     Q(1:N, :) = P(1:N, :)*diag(1+[esp;0])
