@@ -9,7 +9,7 @@ lambda=0.45;
 mu=0.55;
 
 // Nombre de simulations a effectuer
-nbSimulations = 1000;
+nbSimulations = 3000;
 // Valeur du pas de discrétisation
 h = 0.05;
 // Nombre de variables aléatoires à simuler à chaque fois que nécessaire
@@ -24,7 +24,8 @@ function [l, lConf]=longueurExcursion(lambda, mu, nbSimulations, h, n)
         Tn = 0;
         while X>0
             i = 1;;
-            T = h*grand(1, n, 'geom', (lambda+mu)*h)
+            //T = h*grand(1, n, 'geom', (lambda+mu)*h)
+            T = grand(1, n, 'exp', 1/(lambda+mu))
             U =  grand(1, n, 'def');
             e = 1*(U<=lambda/(lambda+mu)) + (-1)*(U>lambda/(lambda+mu));
             while (X>0) & (i<=n)
@@ -33,20 +34,20 @@ function [l, lConf]=longueurExcursion(lambda, mu, nbSimulations, h, n)
                 i = i+1;
             end
         end
-        Tps = [Tps, Tn+h];
+        //Tps = [Tps, Tn+h];
+        Tps = [Tps, Tn]
     end
     l = sum(Tps)/nbSimulations
     lConf = 1.96*sqrt(variance(Tps))/sqrt(nbSimulations)
 endfunction
 
-//Tps = longueurExcursion(lambda, mu, nbSimulations, h, n);
-//disp('Estimation et intervalle de confiance à 95%');
-//ValConf = 1.96*sqrt(variance(Tps, 'c'))/sqrt(nbSimulations);
-//E = sum(Tps, 'c')/nbSimulations;
-//disp(E+ValConf, E, E-ValConf);
+[l, lConf] = longueurExcursion(lambda, mu, nbSimulations, h, n);
+disp('Estimation et intervalle de confiance à 95%');
+disp(l+lConf, l, l-lConf);
 
 
 // Calcul de la valeur exacte
+
 function l=longueurExacte(lambda, mu, nbSimulations, h, n)
     k_max = 10000;
     p = lambda*mu;
@@ -55,10 +56,11 @@ function l=longueurExacte(lambda, mu, nbSimulations, h, n)
         s = s + p ;
         p = p * (lambda*mu) * (2*k-1) * (2*k) / (k^2);
     end
+    l = 4*s/(lambda+mu)
 endfunction
 
-//disp('Valeur exacte');
-//disp(4*s/(lambda+mu));
+disp('Valeur exacte');
+disp(longueurExacte(lambda, mu, nbSimulations, h, n));
 
 
 

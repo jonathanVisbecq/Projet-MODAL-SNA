@@ -8,16 +8,16 @@
 stacksize(150000000)
 
 // Paramètres
-lambda=0.45
-mu=0.55
+lambda=0.40
+mu=0.6
 N = 10
 
 // Nombre de simulations a effectuer
-nbSimulations = 1000
+nbSimulations = 500
 // Valeur du pas de discrétisation
 h = 0.05
 // Nombre de variables aléatoires à simuler à chaque fois que nécessaire
-n = 200
+n = 100
 
 function [p, e, eConf]=probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
     Tps = []
@@ -27,7 +27,8 @@ function [p, e, eConf]=probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
         Tn = 0
         while (X>0) & (X<N)
             i = 1
-            T = h*grand(1, n, 'geom', (lambda+mu)*h)
+            //T = h*grand(1, n, 'geom', (lambda+mu)*h)
+            T = grand(1, n, 'exp', 1/(lambda+mu))
             U =  grand(1, n, 'def')
             e = 1*(U<=lambda/(lambda+mu)) + (-1)*(U>lambda/(lambda+mu))
             while (X>0) & (X<N) & (i<=n)
@@ -38,35 +39,40 @@ function [p, e, eConf]=probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
         end
         if X==N then
             nb = nb + 1
-            Tps = [Tps, Tn+h]
+            //Tps = [Tps, Tn+h]
+            Tps = [Tps, Tn]
         end
     end
     p = nb/nbSimulations
-    e = sum(Tps)/nbSimulations
+    e = sum(Tps)/length(Tps)
+    disp(length(Tps))
     eConf = 1.96*sqrt(variance(Tps))/sqrt(nbSimulations)
 endfunction
 
 
-Ed = []
-Eu = []
-Fu = []
-Fd = []
-
-m = 18
-for N=1:m
-    [p, e, eConf] = probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
-    [l, lConf] = longueurExcursion(lambda, mu, nbSimulations, h, n)
-    [ETn, ValConf]=espTpsSatDiscr(lambda, mu, h, nbSimulations, N, n)
-    Eu = [Eu, ((1-p)/p)*(l+lConf) + e + eConf]
-    Ed = [Ed, ((1-p)/p)*(l-lConf) + e - eConf]
-    Fu = [Fu, ETn+ValConf]
-    Fd = [Fd, ETn-ValConf]
-end
-
-plot2d(1:m, Eu, style=5)
-plot2d(1:m, Ed, style=5)
-plot2d(1:m, Fu, style=4)
-plot2d(1:m, Fd, style=4)
+// Test de la validité de la formule
+//Ed = []
+//Eu = []
+//Fu = []
+//Fd = []
+//
+//nbSimulations2 = 5*nbSimulations
+//m = 15
+//[l, lConf] = longueurExcursion(lambda, mu, nbSimulations2, h, n)
+//for N=1:m
+//    [p, e, eConf] = probaEspDepassement(lambda, mu, N, nbSimulations2, h, n)
+//    //[ETn, ValConf]=espTpsSatDiscr(lambda, mu, h, nbSimulations, N, n)
+//    [ETn, ValConf]=espTpsSat(lambda, mu, nbSimulations, N)
+//    Eu = [Eu, ((1-p)/p)*(l+lConf) + 0]
+//    Ed = [Ed, ((1-p)/p)*(l-lConf) + 0]
+//    Fu = [Fu, ETn+ValConf]
+//    Fd = [Fd, ETn-ValConf]
+//end
+//
+//plot2d(1:m, Eu, style=5)
+//plot2d(1:m, Ed, style=5)
+//plot2d(1:m, Fu, style=4)
+//plot2d(1:m, Fd, style=4)
 
 
 //disp(((1-p)/p)*(l+lConf) + e + eConf, ((1-p)/p)*l + e, ((1-p)/p)*(l-lConf) + e - eConf)
@@ -77,13 +83,12 @@ plot2d(1:m, Fd, style=4)
 //
 //disp('Probabilité de dépassement de la mémoire avant retour en zéro:')
 //disp(p)
-//
+
+//[p, e, eConf]=probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
 //disp("Espérance du temps de dépassement sachant qu''il à lieu pendant")
 //disp("la première excursion:")
-//E = sum(Tps)/length(Tps)
-//Valconf = 1.96 * sqrt(variance(Tps)) / sqrt(length(Tps))
-//disp(E+Valconf, E, E-Valconf)
-//
+//disp(e+eConf, e, e-eConf)
+
 
 //
 //disp(p)
