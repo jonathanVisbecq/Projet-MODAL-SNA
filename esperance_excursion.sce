@@ -1,22 +1,23 @@
 //------------------------------------------------------------------------------
-// Espérance d'une excursion
+// EspÃ©rance d'une excursion
 //------------------------------------------------------------------------------
 
 stacksize(150000000)
 
-// Paramètres
+// ParamÃ¨tres
 lambda=0.45;
 mu=0.55;
 
 // Nombre de simulations a effectuer
 nbSimulations = 3000;
 // Valeur du pas de discrétisation
+
 h = 0.05;
-// Nombre de variables aléatoires à simuler à chaque fois que nécessaire
+// Nombre de variables alÃ©atoires Ã  simuler Ã  chaque fois que nÃ©cessaire
 n = 10000;
 
 
-// Estimation de l'espérance de la longueur de l'excursion
+// Estimation de l'espÃ©rance de la longueur de l'excursion
 function [l, lConf]=longueurExcursion(lambda, mu, nbSimulations, h, n)
     Tps = []
     for i=1:nbSimulations
@@ -44,6 +45,7 @@ endfunction
 [l, lConf] = longueurExcursion(lambda, mu, nbSimulations, h, n);
 disp('Estimation et intervalle de confiance à 95%');
 disp(l+lConf, l, l-lConf);
+
 
 
 // Calcul de la valeur exacte

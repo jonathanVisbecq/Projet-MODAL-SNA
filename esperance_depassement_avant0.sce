@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-// Calcul de la probabilité de dépassement de la mémoire avant le premier passage
-// et de l'espérance de la temps de dépassement sachant qu'il se produit avant le 
-// premier retour en 0. -- sans changement de probabilité --
+// Calcul de la probabilitÃƒÂ© de dÃƒÂ©passement de la mÃƒÂ©moire avant le premier passage
+// et de l'espÃƒÂ©rance de la temps de dÃƒÂ©passement sachant qu'il se produit avant le 
+// premier retour en 0. -- sans changement de probabilitÃƒÂ© --
 //------------------------------------------------------------------------------
 
 
@@ -18,6 +18,7 @@ nbSimulations = 500
 h = 0.05
 // Nombre de variables aléatoires à simuler à chaque fois que nécessaire
 n = 100
+
 
 function [p, e, eConf]=probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
     Tps = []
@@ -78,10 +79,10 @@ endfunction
 //disp(((1-p)/p)*(l+lConf) + e + eConf, ((1-p)/p)*l + e, ((1-p)/p)*(l-lConf) + e - eConf)
 //disp(ETn+ValConf, ETn, ETn-ValConf)
 
-//disp('Nombre de réalisations de l''évènement:')
+//disp('Nombre de rÃƒÂ©alisations de l''ÃƒÂ©vÃƒÂ¨nement:')
 //disp(nb)
 //
-//disp('Probabilité de dépassement de la mémoire avant retour en zéro:')
+//disp('ProbabilitÃƒÂ© de dÃƒÂ©passement de la mÃƒÂ©moire avant retour en zÃƒÂ©ro:')
 //disp(p)
 
 //[p, e, eConf]=probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
