@@ -10,11 +10,11 @@ stacksize(150000000)
 // ParamÃ¨tres
 lambda=0.45
 mu=0.55
-<<<<<<< HEAD
+
 N = 15
 
 // Nombre de simulations a effectuer
-nbSimulations = 30000
+nbSimulations = 1000
 // Valeur du pas de discrÃ©tisation
 h = 0.05
 // Nombre de variables alÃ©atoires Ã  simuler Ã  chaque fois que nÃ©cessaire
@@ -53,11 +53,11 @@ Eu = []
 Fu = []
 Fd = []
 
-m = 18
+m = 5
 for N=1:m
     [p, e, eConf] = probaEspDepassement(lambda, mu, N, nbSimulations, h, n)
     [l, lConf] = longueurExcursion(lambda, mu, nbSimulations, h, n)
-    [ETn, ValConf]=espTpsSatDiscr(lambda, mu, h, nbSimulations, N, n)
+    [ETn, ValConf]=espTps(lambda, mu, nbSimulations, N, n)
     Eu = [Eu, ((1-p)/p)*(l+lConf) + e + eConf]
     Ed = [Ed, ((1-p)/p)*(l-lConf) + e - eConf]
     Fu = [Fu, ETn+ValConf]
