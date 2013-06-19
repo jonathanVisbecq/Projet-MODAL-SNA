@@ -33,8 +33,7 @@ endfunction
 //
 // Tn (vecteur ligne) : Les temps de saturation données par les simulations
 //
-function Tn=tempsDeSaturation(lambda, mu, nbSimulations, N)
-    n = 2000
+function Tn=tempsDeSaturation(lambda, mu, nbSimulations, N, n)
     X = zeros(nbSimulations, 1)
     Tn = zeros(nbSimulations, 1)
     F = ones(nbSimulations, 1)
@@ -67,8 +66,8 @@ endfunction
 // ValConf (vecteur ligne) : L'ecart entre la moyenne empirique et les bornes
 //                          de l'intervalle de confiance
 //
-function [ETn, ValConf]=espTpsSat(lambda, mu, nbSimulations, N)
-    Tn=tempsDeSaturation(lambda, mu, nbSimulations, N)
+function [ETn, ValConf]=espTpsSat(lambda, mu, nbSimulations, N, n)
+    Tn=tempsDeSaturation(lambda, mu, nbSimulations, N, n)
     ETn = sum(Tn)/nbSimulations
     ValConf = 1.96*sqrt(variance(Tn, 'c'))/sqrt(nbSimulations)
 endfunction
@@ -90,8 +89,8 @@ endfunction
 // ValConf (vecteur ligne) : L'ecart entre la moyenne empirique et les bornes
 //                          de l'intervalle de confiance a 95%
 //
-function pS=probabiliteSat(lambda, mu, nbSimulations, N, S)
-    Tn = tempsDeSaturation(lambda, mu, nbSimulations, N)
+function pS=probabiliteSat(lambda, mu, nbSimulations, N, S, n)
+    Tn = tempsDeSaturation(lambda, mu, nbSimulations, N, n)
     pS = sum(Tn<=S)/nbSimulations
 endfunction
 
@@ -102,7 +101,7 @@ endfunction
 //plot(t,E)
 
 
-[e, v] = espTpsSat(0.36, 0.4, 1000, 3)
+[e, v] = espTpsSat(0.36, 0.4, 1000, 3, 100)
 disp(v+e, e-v)
 
 

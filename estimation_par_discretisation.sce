@@ -60,7 +60,6 @@ function Tn=tempsDeSaturationDiscr(lambda, mu, h, nbSimulations, N, n)
             i = i+1
         end
     end
-
     Tn = Tn'
 endfunction
 
